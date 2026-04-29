@@ -28,56 +28,117 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Entrar na sua conta</h1>
-          <p className="text-gray-500 mt-1">Acesse seu curso aqui</p>
+    <main style={{
+      minHeight: "100vh", background: "#FDF2F8",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      padding: "24px 16px",
+    }}>
+      <div style={{ width: "100%", maxWidth: "420px" }}>
+
+        {/* Header */}
+        <div style={{ textAlign: "center", marginBottom: "32px" }}>
+          <p style={{
+            fontFamily: "var(--font-display)", fontSize: "2rem",
+            color: "#EC4899", marginBottom: "4px",
+          }}>
+            Bem-vinda de volta
+          </p>
+          <h1 style={{
+            fontFamily: "var(--font-heading)", fontSize: "1.4rem",
+            fontWeight: 700, color: "#831843",
+          }}>
+            Acesse seu curso
+          </h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
-            <input
-              type="email"
-              required
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="seu@email.com"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Senha</label>
-            <input
-              type="password"
-              required
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Sua senha"
-            />
-          </div>
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 rounded-lg px-4 py-3 text-sm">
-              {error}
+        {/* Card */}
+        <div style={{
+          background: "white", borderRadius: "24px", padding: "36px 32px",
+          boxShadow: "0 4px 32px rgba(236,72,153,0.12)",
+          border: "1px solid #FBCFE8",
+        }}>
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            <div>
+              <label style={{
+                display: "block", fontSize: "0.85rem", fontWeight: 600,
+                color: "#831843", marginBottom: "8px",
+              }}>
+                E-mail
+              </label>
+              <input
+                type="email"
+                required
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                placeholder="seu@email.com"
+                style={{
+                  width: "100%", border: "1.5px solid #FBCFE8", borderRadius: "12px",
+                  padding: "14px 16px", fontSize: "1rem", outline: "none",
+                  color: "#831843", background: "#FDF2F8", boxSizing: "border-box",
+                  transition: "border-color 150ms",
+                }}
+                onFocus={(e) => e.target.style.borderColor = "#EC4899"}
+                onBlur={(e) => e.target.style.borderColor = "#FBCFE8"}
+              />
             </div>
-          )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-purple-700 hover:bg-purple-800 disabled:opacity-50 text-white font-bold py-4 rounded-xl transition-colors text-lg"
-          >
-            {loading ? "Entrando..." : "Entrar →"}
-          </button>
-        </form>
+            <div>
+              <label style={{
+                display: "block", fontSize: "0.85rem", fontWeight: 600,
+                color: "#831843", marginBottom: "8px",
+              }}>
+                Senha
+              </label>
+              <input
+                type="password"
+                required
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                placeholder="Sua senha"
+                style={{
+                  width: "100%", border: "1.5px solid #FBCFE8", borderRadius: "12px",
+                  padding: "14px 16px", fontSize: "1rem", outline: "none",
+                  color: "#831843", background: "#FDF2F8", boxSizing: "border-box",
+                  transition: "border-color 150ms",
+                }}
+                onFocus={(e) => e.target.style.borderColor = "#EC4899"}
+                onBlur={(e) => e.target.style.borderColor = "#FBCFE8"}
+              />
+            </div>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
+            {error && (
+              <div style={{
+                background: "#FEF2F2", border: "1px solid #FECACA",
+                color: "#DC2626", borderRadius: "12px", padding: "12px 16px",
+                fontSize: "0.875rem",
+              }}>
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: "100%", cursor: loading ? "not-allowed" : "pointer",
+                background: loading ? "#D1D5DB" : "linear-gradient(135deg, #EC4899, #BE185D)",
+                color: "white", fontWeight: 700, fontSize: "1.05rem",
+                padding: "16px", borderRadius: "12px", border: "none",
+                boxShadow: loading ? "none" : "0 4px 20px rgba(236,72,153,0.35)",
+                transition: "opacity 150ms",
+              }}
+            >
+              {loading ? "Entrando..." : "Entrar →"}
+            </button>
+          </form>
+        </div>
+
+        <p style={{
+          textAlign: "center", fontSize: "0.875rem",
+          color: "#BE185D", marginTop: "20px",
+        }}>
           Acabou de comprar?{" "}
-          <Link href="/parabens" className="text-purple-700 font-semibold hover:underline">
+          <Link href="/parabens" style={{ color: "#EC4899", fontWeight: 700, textDecoration: "none" }}>
             Crie sua conta aqui
           </Link>
         </p>

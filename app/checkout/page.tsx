@@ -22,10 +22,8 @@ export default function CheckoutPage() {
       });
 
       const data = await res.json();
-
       if (!res.ok) throw new Error(data.error || "Erro ao iniciar checkout");
 
-      // Redireciona para a página de pagamento do Efí (PIX ou link)
       if (data.pixQrCode) {
         router.push(`/checkout/pix?email=${encodeURIComponent(form.email)}&txid=${data.txid}`);
       }
@@ -37,61 +35,147 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Kit Agenda Cheia</h1>
-          <p className="text-gray-500 mt-1">Preencha seus dados para continuar</p>
-          <div className="mt-4 bg-purple-50 rounded-xl p-4">
-            <p className="text-purple-700 font-semibold text-lg">R$ 97,00</p>
-            <p className="text-purple-500 text-sm">Acesso vitalício</p>
-          </div>
+    <main style={{
+      minHeight: "100vh", background: "#FDF2F8",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      padding: "24px 16px",
+    }}>
+      <div style={{ width: "100%", maxWidth: "440px" }}>
+
+        {/* Header */}
+        <div style={{ textAlign: "center", marginBottom: "32px" }}>
+          <p style={{
+            fontFamily: "var(--font-display)", fontSize: "1.8rem",
+            color: "#EC4899", marginBottom: "4px",
+          }}>
+            Quase lá!
+          </p>
+          <h1 style={{
+            fontFamily: "var(--font-heading)", fontSize: "1.5rem",
+            fontWeight: 700, color: "#831843", marginBottom: "8px",
+          }}>
+            Kit Agenda Cheia
+          </h1>
+          <p style={{ color: "#BE185D", fontSize: "0.9rem" }}>
+            Preencha seus dados para continuar
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nome completo</label>
-            <input
-              type="text"
-              required
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Seu nome"
-            />
+        {/* Card */}
+        <div style={{
+          background: "white", borderRadius: "24px", padding: "36px 32px",
+          boxShadow: "0 4px 32px rgba(236,72,153,0.12)",
+          border: "1px solid #FBCFE8",
+        }}>
+
+          {/* Price badge */}
+          <div style={{
+            background: "linear-gradient(135deg, #FDF2F8, #FCE7F3)",
+            border: "1px solid #F9A8D4", borderRadius: "16px",
+            padding: "16px 20px", marginBottom: "28px", textAlign: "center",
+          }}>
+            <p style={{ fontFamily: "var(--font-heading)", fontSize: "1.8rem", fontWeight: 700, color: "#831843" }}>
+              R$ 97,00
+            </p>
+            <p style={{ fontSize: "0.85rem", color: "#BE185D", marginTop: "2px" }}>
+              Acesso vitalício + bônus exclusivos
+            </p>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
-            <input
-              type="email"
-              required
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="seu@email.com"
-            />
-            <p className="text-xs text-gray-400 mt-1">Use o e-mail que você vai usar para acessar o curso</p>
-          </div>
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 rounded-lg px-4 py-3 text-sm">
-              {error}
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            <div>
+              <label style={{
+                display: "block", fontSize: "0.85rem", fontWeight: 600,
+                color: "#831843", marginBottom: "8px",
+              }}>
+                Seu nome
+              </label>
+              <input
+                type="text"
+                required
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="Como prefere ser chamada"
+                style={{
+                  width: "100%", border: "1.5px solid #FBCFE8", borderRadius: "12px",
+                  padding: "14px 16px", fontSize: "1rem", outline: "none",
+                  color: "#831843", background: "#FDF2F8", boxSizing: "border-box",
+                  transition: "border-color 150ms",
+                }}
+                onFocus={(e) => e.target.style.borderColor = "#EC4899"}
+                onBlur={(e) => e.target.style.borderColor = "#FBCFE8"}
+              />
             </div>
-          )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-purple-700 hover:bg-purple-800 disabled:opacity-50 text-white font-bold py-4 rounded-xl transition-colors text-lg"
-          >
-            {loading ? "Aguarde..." : "Pagar com PIX →"}
-          </button>
-        </form>
+            <div>
+              <label style={{
+                display: "block", fontSize: "0.85rem", fontWeight: 600,
+                color: "#831843", marginBottom: "8px",
+              }}>
+                Seu e-mail
+              </label>
+              <input
+                type="email"
+                required
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                placeholder="seu@email.com"
+                style={{
+                  width: "100%", border: "1.5px solid #FBCFE8", borderRadius: "12px",
+                  padding: "14px 16px", fontSize: "1rem", outline: "none",
+                  color: "#831843", background: "#FDF2F8", boxSizing: "border-box",
+                  transition: "border-color 150ms",
+                }}
+                onFocus={(e) => e.target.style.borderColor = "#EC4899"}
+                onBlur={(e) => e.target.style.borderColor = "#FBCFE8"}
+              />
+              <p style={{ fontSize: "0.78rem", color: "#BE185D", marginTop: "6px" }}>
+                Use o e-mail que vai usar para acessar o curso
+              </p>
+            </div>
 
-        <p className="text-center text-xs text-gray-400 mt-6">
-          🔒 Compra 100% segura • Garantia de 7 dias
-        </p>
+            {error && (
+              <div style={{
+                background: "#FEF2F2", border: "1px solid #FECACA",
+                color: "#DC2626", borderRadius: "12px", padding: "12px 16px",
+                fontSize: "0.875rem",
+              }}>
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: "100%", cursor: loading ? "not-allowed" : "pointer",
+                background: loading ? "#D1D5DB" : "linear-gradient(135deg, #8B5CF6, #7C3AED)",
+                color: "white", fontWeight: 700, fontSize: "1.05rem",
+                padding: "16px", borderRadius: "12px", border: "none",
+                boxShadow: loading ? "none" : "0 4px 20px rgba(139,92,246,0.4)",
+                transition: "opacity 150ms, transform 150ms",
+              }}
+            >
+              {loading ? "Gerando PIX..." : "Pagar com PIX →"}
+            </button>
+          </form>
+        </div>
+
+        {/* Trust */}
+        <div style={{
+          display: "flex", justifyContent: "center", gap: "20px",
+          marginTop: "20px", fontSize: "12px", color: "#BE185D",
+          flexWrap: "wrap",
+        }}>
+          {["Compra segura", "Acesso imediato", "Garantia 7 dias"].map((t) => (
+            <span key={t} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              {t}
+            </span>
+          ))}
+        </div>
       </div>
     </main>
   );

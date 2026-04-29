@@ -1,26 +1,51 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --brand-primary: #EC4899;
+  --brand-secondary: #F9A8D4;
+  --brand-cta: #8B5CF6;
+  --brand-cta-hover: #7C3AED;
+  --brand-bg: #FDF2F8;
+  --brand-bg-card: #ffffff;
+  --brand-text: #831843;
+  --brand-text-muted: #BE185D;
+  --brand-border: #FBCFE8;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-background: var(--brand-bg);
+  --color-foreground: var(--brand-text);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-heading);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--brand-bg);
+  color: var(--brand-text);
+  font-family: var(--font-body), Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: var(--font-display), cursive;
+}
+
+.font-heading {
+  font-family: var(--font-heading), Georgia, serif;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--brand-bg); }
+::-webkit-scrollbar-thumb { background: var(--brand-secondary); border-radius: 3px; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Focus visible */
+*:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
 }

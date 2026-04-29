@@ -10,6 +10,7 @@ function PixContent() {
   const [pixData, setPixData] = useState<{ qrcode: string; copiaecola: string } | null>(null);
   const [checking, setChecking] = useState(false);
   const [paid, setPaid] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     async function fetchPix() {
@@ -36,57 +37,161 @@ function PixContent() {
     return () => clearInterval(interval);
   }, [txid, email]);
 
+  async function handleCopy() {
+    if (!pixData) return;
+    await navigator.clipboard.writeText(pixData.copiaecola);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  }
+
   if (paid) {
     return (
-      <div className="text-center">
-        <p className="text-2xl font-bold text-green-600">✓ Pagamento confirmado!</p>
-        <p className="text-gray-500 mt-2">Redirecionando...</p>
+      <div style={{ textAlign: "center", padding: "40px 24px" }}>
+        <div style={{
+          width: 72, height: 72, borderRadius: "50%",
+          background: "linear-gradient(135deg, #D1FAE5, #A7F3D0)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          margin: "0 auto 20px",
+        }}>
+          <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="#059669" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <p style={{ fontFamily: "var(--font-heading)", fontSize: "1.6rem", fontWeight: 700, color: "#831843" }}>
+          Pagamento confirmado!
+        </p>
+        <p style={{ color: "#BE185D", marginTop: "8px" }}>Redirecionando para o seu acesso...</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md text-center">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Pague com PIX</h1>
-      <p className="text-gray-500 mb-6">Escaneie o QR Code ou copie o código</p>
+    <div style={{
+      background: "white", borderRadius: "24px", padding: "36px 32px",
+      width: "100%", maxWidth: "440px",
+      boxShadow: "0 4px 32px rgba(236,72,153,0.12)",
+      border: "1px solid #FBCFE8",
+      textAlign: "center",
+    }}>
+      <p style={{
+        fontFamily: "var(--font-display)", fontSize: "1.6rem",
+        color: "#EC4899", marginBottom: "4px",
+      }}>
+        Só falta isso!
+      </p>
+      <h1 style={{
+        fontFamily: "var(--font-heading)", fontSize: "1.5rem",
+        fontWeight: 700, color: "#831843", marginBottom: "8px",
+      }}>
+        Pague com PIX
+      </h1>
+      <p style={{ color: "#BE185D", fontSize: "0.9rem", marginBottom: "28px" }}>
+        Escaneie o QR Code ou copie o código
+      </p>
 
       {pixData ? (
         <>
-          <div className="bg-gray-50 rounded-xl p-4 mb-4">
+          {/* QR Code */}
+          <div style={{
+            background: "#FDF2F8", borderRadius: "20px",
+            padding: "20px", marginBottom: "20px",
+            border: "1px solid #FBCFE8", display: "inline-block",
+          }}>
             <img
               src={`data:image/png;base64,${pixData.qrcode}`}
               alt="QR Code PIX"
-              className="w-48 h-48 mx-auto"
+              style={{ width: 200, height: 200, display: "block" }}
             />
           </div>
 
           <button
-            onClick={() => navigator.clipboard.writeText(pixData.copiaecola)}
-            className="w-full border-2 border-purple-700 text-purple-700 font-semibold py-3 rounded-xl hover:bg-purple-50 transition-colors mb-4"
+            onClick={handleCopy}
+            style={{
+              width: "100%", cursor: "pointer",
+              background: copied ? "linear-gradient(135deg, #D1FAE5, #A7F3D0)" : "white",
+              border: `2px solid ${copied ? "#059669" : "#EC4899"}`,
+              color: copied ? "#059669" : "#EC4899",
+              fontWeight: 700, fontSize: "0.95rem",
+              padding: "14px", borderRadius: "12px",
+              marginBottom: "16px", transition: "all 200ms",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+            }}
           >
-            Copiar código PIX
+            {copied ? (
+              <>
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                Código copiado!
+              </>
+            ) : (
+              <>
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                Copiar código PIX
+              </>
+            )}
           </button>
 
-          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-sm text-yellow-800">
-            {checking ? "Verificando pagamento..." : "Aguardando confirmação do PIX..."}
+          {/* Status */}
+          <div style={{
+            background: "#FDF2F8", border: "1px solid #FBCFE8",
+            borderRadius: "12px", padding: "14px 16px",
+            fontSize: "0.875rem", color: "#BE185D",
+            display: "flex", alignItems: "center", justifyContent: "center", gap: "10px",
+          }}>
+            {checking ? (
+              <>
+                <span style={{
+                  width: 14, height: 14, borderRadius: "50%",
+                  border: "2px solid #EC4899", borderTopColor: "transparent",
+                  display: "inline-block", animation: "spin 0.7s linear infinite",
+                }} />
+                Verificando pagamento...
+              </>
+            ) : (
+              <>
+                <span style={{
+                  width: 8, height: 8, borderRadius: "50%",
+                  background: "#FCD34D", display: "inline-block",
+                }} />
+                Aguardando confirmação do PIX...
+              </>
+            )}
           </div>
         </>
       ) : (
-        <div className="py-12 text-gray-400">Gerando QR Code...</div>
+        <div style={{ padding: "48px 0", color: "#BE185D" }}>
+          <div style={{
+            width: 32, height: 32, borderRadius: "50%",
+            border: "3px solid #EC4899", borderTopColor: "transparent",
+            margin: "0 auto 16px", animation: "spin 0.7s linear infinite",
+          }} />
+          Gerando QR Code...
+        </div>
       )}
 
-      <p className="text-xs text-gray-400 mt-6">
-        Após o pagamento você será redirecionado automaticamente.<br />
+      <p style={{ fontSize: "0.78rem", color: "#BE185D", marginTop: "20px", lineHeight: 1.6 }}>
+        Você será redirecionada automaticamente após o pagamento.<br />
         Acesso enviado para: <strong>{email}</strong>
       </p>
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
 
 export default function PixPage() {
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <Suspense fallback={<div>Carregando...</div>}>
+    <main style={{
+      minHeight: "100vh", background: "#FDF2F8",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      padding: "24px 16px",
+    }}>
+      <Suspense fallback={
+        <div style={{ color: "#BE185D" }}>Carregando...</div>
+      }>
         <PixContent />
       </Suspense>
     </main>
