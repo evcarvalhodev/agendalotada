@@ -1,12 +1,14 @@
 import { Resend } from "resend";
 
-export const resend = new Resend(process.env.RESEND_API_KEY);
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY || "placeholder");
+}
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 const FROM_EMAIL = "noreply@seudominio.com.br";
 
 export async function sendWelcomeEmail(email: string) {
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM_EMAIL,
     to: email,
     subject: "🎉 Sua compra foi confirmada! Acesse agora",
@@ -25,7 +27,7 @@ export async function sendWelcomeEmail(email: string) {
 }
 
 export async function sendAbandonedCheckoutEmail(email: string) {
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM_EMAIL,
     to: email,
     subject: "Você esqueceu algo... 👀",
