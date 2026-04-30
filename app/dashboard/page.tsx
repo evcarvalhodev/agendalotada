@@ -127,17 +127,21 @@ export default function DashboardPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return router.push("/login");
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("activated, is_admin")
-        .eq("id", user.id)
-        .single();
+      // Admin bypass por email — nunca bloqueia o admin
+      const isAdmin = user.email === "evcarvalhodev@gmail.com";
 
-      // Admin sempre tem acesso; usuário comum precisa de activated=true
-      if (!profile?.is_admin && !profile?.activated) {
-        setLocked(true);
-        setLoading(false);
-        return;
+      if (!isAdmin) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("activated")
+          .eq("id", user.id)
+          .single();
+
+        if (!profile?.activated) {
+          setLocked(true);
+          setLoading(false);
+          return;
+        }
       }
 
       setUserName(user.email?.split("@")[0] || "");
