@@ -12,10 +12,116 @@ type Module = {
   lessons: { id: string; title: string; youtube_id: string; order: number }[];
 };
 
+// Lock page shown to logged-in users who haven't paid yet
+function LockedPage({ onLogout }: { onLogout: () => void }) {
+  return (
+    <main style={{ minHeight: "100vh", background: "#FDF2F8" }}>
+      {/* Header */}
+      <header style={{
+        background: "linear-gradient(135deg, #831843, #BE185D)",
+        padding: "0 24px", height: 64,
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        boxShadow: "0 2px 16px rgba(131,24,67,0.3)",
+        position: "sticky", top: 0, zIndex: 50,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{
+            width: 36, height: 36, borderRadius: "50%",
+            background: "rgba(255,255,255,0.2)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          </div>
+          <span style={{ color: "white", fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: "1.05rem" }}>
+            Kit Agenda Cheia
+          </span>
+        </div>
+        <button
+          onClick={onLogout}
+          style={{
+            background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)",
+            color: "white", fontSize: "0.8rem", fontWeight: 600,
+            padding: "7px 16px", borderRadius: "999px", cursor: "pointer",
+          }}
+        >
+          Sair
+        </button>
+      </header>
+
+      {/* Lock content */}
+      <div style={{
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+        minHeight: "calc(100vh - 64px)", padding: "40px 24px", textAlign: "center",
+      }}>
+        {/* Lock icon */}
+        <div style={{
+          width: 88, height: 88, borderRadius: "50%",
+          background: "linear-gradient(135deg, #FCE7F3, #FBCFE8)",
+          border: "2px solid #F9A8D4",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          marginBottom: "28px",
+          boxShadow: "0 8px 32px rgba(236,72,153,0.15)",
+        }}>
+          <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="#BE185D" strokeWidth={1.8}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+
+        <p style={{
+          fontFamily: "var(--font-display)", fontSize: "1.8rem",
+          color: "#EC4899", marginBottom: "8px",
+        }}>
+          Acesso bloqueado
+        </p>
+        <h2 style={{
+          fontFamily: "var(--font-heading)", fontSize: "1.3rem",
+          fontWeight: 700, color: "#831843", marginBottom: "12px",
+          maxWidth: "400px",
+        }}>
+          Esta área é exclusiva para alunas do Kit Agenda Cheia
+        </h2>
+        <p style={{
+          color: "#BE185D", fontSize: "0.95rem", marginBottom: "36px",
+          maxWidth: "380px", lineHeight: 1.6,
+        }}>
+          Para ter acesso ao curso completo com todos os módulos e aulas, você precisa adquirir o Kit Agenda Cheia.
+        </p>
+
+        <Link
+          href="/checkout"
+          style={{
+            display: "inline-flex", alignItems: "center", gap: "10px",
+            background: "linear-gradient(135deg, #EC4899, #BE185D)",
+            color: "white", fontWeight: 700, fontSize: "1.05rem",
+            padding: "16px 32px", borderRadius: "999px",
+            textDecoration: "none",
+            boxShadow: "0 6px 24px rgba(236,72,153,0.4)",
+          }}
+        >
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+          Ativar minha conta agora
+        </Link>
+
+        <p style={{ color: "#F9A8D4", fontSize: "0.8rem", marginTop: "16px" }}>
+          Já comprou?{" "}
+          <Link href="/parabens" style={{ color: "#EC4899", fontWeight: 700, textDecoration: "none" }}>
+            Clique aqui para criar sua senha
+          </Link>
+        </p>
+      </div>
+    </main>
+  );
+}
+
 export default function DashboardPage() {
   const router = useRouter();
   const [modules, setModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState(true);
+  const [locked, setLocked] = useState(false);
   const [userName, setUserName] = useState("");
   const [openModule, setOpenModule] = useState<string | null>(null);
 
@@ -26,11 +132,16 @@ export default function DashboardPage() {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("activated")
+        .select("activated, is_admin")
         .eq("id", user.id)
         .single();
 
-      if (!profile?.activated) return router.push("/parabens");
+      // Admin sempre tem acesso; usuário comum precisa de activated=true
+      if (!profile?.is_admin && !profile?.activated) {
+        setLocked(true);
+        setLoading(false);
+        return;
+      }
 
       setUserName(user.email?.split("@")[0] || "");
 
@@ -70,6 +181,10 @@ export default function DashboardPage() {
         </div>
       </main>
     );
+  }
+
+  if (locked) {
+    return <LockedPage onLogout={handleLogout} />;
   }
 
   return (
@@ -131,7 +246,6 @@ export default function DashboardPage() {
             Sua jornada para a agenda cheia começa aqui
           </h2>
 
-          {/* Progress hint */}
           <div style={{
             display: "flex", gap: "20px", marginTop: "20px", flexWrap: "wrap",
           }}>
