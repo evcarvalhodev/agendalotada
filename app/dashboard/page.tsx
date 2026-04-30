@@ -106,11 +106,8 @@ function LockedPage({ onLogout }: { onLogout: () => void }) {
           Ativar minha conta agora
         </Link>
 
-        <p style={{ color: "#F9A8D4", fontSize: "0.8rem", marginTop: "16px" }}>
-          Já comprou?{" "}
-          <Link href="/parabens" style={{ color: "#EC4899", fontWeight: 700, textDecoration: "none" }}>
-            Clique aqui para criar sua senha
-          </Link>
+        <p style={{ color: "#BE185D", fontSize: "0.8rem", marginTop: "16px" }}>
+          Dúvidas? Entre em contato pelo WhatsApp ou e-mail.
         </p>
       </div>
     </main>
